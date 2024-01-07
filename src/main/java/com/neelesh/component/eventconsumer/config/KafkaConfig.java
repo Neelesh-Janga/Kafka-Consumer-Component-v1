@@ -1,6 +1,6 @@
 package com.neelesh.component.eventconsumer.config;
 
-import com.neelesh.component.eventconsumer.models.TransactionMessage;
+import com.neelesh.component.eventconsumer.DTO.TransactionMessageDTO;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.UUIDDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class KafkaConfig {
 
     @Bean
-    public ConsumerFactory<UUID, TransactionMessage> consumerFactory(){
+    public ConsumerFactory<UUID, TransactionMessageDTO> consumerFactory(){
         Map<String, Object> consumerProps = new HashMap<>();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "group-id");
@@ -30,14 +30,16 @@ public class KafkaConfig {
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         consumerProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
         consumerProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
-        consumerProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.neelesh.component.eventconsumer.models.TransactionMessage");
+        consumerProps.put(
+                JsonDeserializer.VALUE_DEFAULT_TYPE, "com.neelesh.component.eventconsumer.DTO.TransactionMessageDTO"
+        );
 
         return new DefaultKafkaConsumerFactory<>(consumerProps);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<UUID, TransactionMessage> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<UUID, TransactionMessage>
+    public ConcurrentKafkaListenerContainerFactory<UUID, TransactionMessageDTO> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<UUID, TransactionMessageDTO>
                 factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;

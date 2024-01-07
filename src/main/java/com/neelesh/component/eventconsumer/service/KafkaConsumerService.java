@@ -1,6 +1,6 @@
 package com.neelesh.component.eventconsumer.service;
 
-import com.neelesh.component.eventconsumer.models.TransactionMessage;
+import com.neelesh.component.eventconsumer.DTO.TransactionMessageDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -9,11 +9,17 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaConsumerService {
 
-    @KafkaListener(topics = {"transaction-topic"}, groupId = "group-id")
-    public void consume(TransactionMessage transactionMessage){
-        log.info(String.format("Entering consume method with received id %s and transactionMessage %s",
-                transactionMessage.getTransactionId().toString(), transactionMessage.toString()));
+    private final TransactionHandleService transactionHandleService;
 
-        log.info(String.format("The status of received transactionMessage is %s", transactionMessage.getStatus()));
+    public KafkaConsumerService(TransactionHandleService transactionHandleService) {
+        this.transactionHandleService = transactionHandleService;
+    }
+
+    @KafkaListener(topics = {"transaction-topic"}, groupId = "group-id")
+    public void consume(TransactionMessageDTO transactionMessageDTO){
+        log.info(String.format("Entering consume method with transactionMessageDTO %s", transactionMessageDTO));
+        log.info(String.format("The status of received transactionMessage is %s", transactionMessageDTO.getStatus()));
+
+        transactionHandleService.save(transactionMessageDTO);
     }
 }
