@@ -1,26 +1,22 @@
 package com.neelesh.component.eventconsumer.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.*;
+import com.neelesh.component.eventconsumer.utils.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Entity
+@Setter
+@Getter
 @ToString
 public class TransactionMessage {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transactionId;
     private Event event;
     private Double amount;
     private Status status;
-
-    public enum Event {
-        WITHDRAW, DEPOSIT
-    }
-
-    public enum Status {
-        SUBMITTED, STARTED, PENDING, FINISHED, TERMINATED
-    }
 }
